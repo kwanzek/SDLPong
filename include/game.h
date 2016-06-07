@@ -7,6 +7,8 @@
 
 #include "graphics.h"
 #include "globals.h"
+#include "color.h"
+#include "paddle.h"
 
 struct Game {
     Game();
@@ -16,6 +18,8 @@ struct Game {
     void gameLoop();
 
     Graphics* graphics = NULL;
+    Paddle leftPaddle;
+    Paddle rightPaddle;
     bool inProgress;
 };
 

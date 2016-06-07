@@ -9,6 +9,20 @@ void Game::init() {
     SDL_Init(SDL_INIT_EVERYTHING);
     graphics = new Graphics();
     inProgress = true;
+    leftPaddle.collider = SDL_Rect{
+        0,
+        (Globals::SCREEN_HEIGHT/2)-(Globals::PADDLE_HEIGHT/2),
+        Globals::PADDLE_WIDTH,
+        Globals::PADDLE_HEIGHT
+    };
+    leftPaddle.paddleColor = Color{255,56,56,255};
+    rightPaddle.collider = SDL_Rect{
+        Globals::SCREEN_WIDTH-Globals::PADDLE_WIDTH,
+        (Globals::SCREEN_HEIGHT/2)-(Globals::PADDLE_HEIGHT/2),
+        Globals::PADDLE_WIDTH,
+        Globals::PADDLE_HEIGHT
+    };
+    rightPaddle.paddleColor = Color{0, 255, 188, 255};
 }
 
 void Game::terminate() {
@@ -25,10 +39,11 @@ void Game::gameLoop() {
                 inProgress = false;
             }
         }
-        SDL_SetRenderDrawColor(graphics->renderer, 255, 128, 128, 1);
+        SDL_SetRenderDrawColor(graphics->renderer, leftPaddle.paddleColor.r, leftPaddle.paddleColor.g, leftPaddle.paddleColor.b, 1);
+        SDL_RenderFillRect(graphics->renderer, &leftPaddle.collider);
 
-        SDL_Rect rect = SDL_Rect{100,100,100,100};
-        SDL_RenderFillRect(graphics->renderer, &rect);
+        SDL_SetRenderDrawColor(graphics->renderer, rightPaddle.paddleColor.r, rightPaddle.paddleColor.g, rightPaddle.paddleColor.b, 1);
+        SDL_RenderFillRect(graphics->renderer, &rightPaddle.collider);
 
         SDL_RenderPresent(graphics->renderer);
     }
