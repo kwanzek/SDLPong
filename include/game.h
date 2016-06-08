@@ -21,6 +21,8 @@ struct Game {
     Paddle leftPaddle;
     Paddle rightPaddle;
     bool inProgress;
+
+    void movePaddle(Paddle& paddle, SDL_Scancode keycode, float deltaTime);
 };
 
 #endif

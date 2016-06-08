@@ -8,6 +8,10 @@ public:
     inline Paddle(){};
     inline ~Paddle(){};
 
+    float x;
+    float y;
+    int w;
+    int h;
     SDL_Rect collider;
     Color paddleColor;
 };
