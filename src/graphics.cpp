@@ -1,7 +1,6 @@
 #include "graphics.h"
-
+#include <SDL_Image.h>
 Graphics::Graphics() {
-    this->init();
 }
 
 Graphics::~Graphics() {
@@ -9,12 +8,12 @@ Graphics::~Graphics() {
 }
 
 void Graphics::init(){
-    SDL_CreateWindowAndRenderer(Globals::SCREEN_WIDTH, Globals::SCREEN_HEIGHT, 0, &window, &renderer);
-    SDL_SetWindowTitle(window, "SDLPong");
+    SDL_CreateWindowAndRenderer(Globals::SCREEN_WIDTH, Globals::SCREEN_HEIGHT, 0, &this->window, &this->renderer);
+    SDL_SetWindowTitle(this->window, "SDLPong");
 }
 
-void Graphics::terminate(){
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+void Graphics::terminate() {
+    SDL_DestroyRenderer(this->renderer);
+    SDL_DestroyWindow(this->window);
 }
 
