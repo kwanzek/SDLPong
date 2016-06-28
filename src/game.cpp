@@ -164,8 +164,6 @@ void Game::gameLoop() {
         SDL_RenderFillRect(graphics->renderer, &rightPaddleDrawRect);
 
         if (roundRunning) {
-            //TODO: Swap with some rudimentary AI for controlling the second player
-            rightPaddle->collider.y = ball->collider.y+10;
             if (ball->dx > 0) {
                 detectPaddleCollision(*ball, *rightPaddle);
             }
@@ -174,6 +172,7 @@ void Game::gameLoop() {
             }
             detectWallCollision(*ball, deltaTime);
             moveBall(*ball, deltaTime);
+            runAI(*ball, *rightPaddle, deltaTime);
         }
 
         SDL_RenderPresent(graphics->renderer);
@@ -214,7 +213,7 @@ void Game::startRound(Paddle& player1, Paddle& player2, Ball& ball) {
     int angle = lastScored == 1 ? 45 : 135;
 
     //int randAngle = (rand() % 100) + 70; //Cone of degrees offset to place it between the two paddles
-    ball.speed = 600.f;
+    ball.speed = 800.f;
     ball.dx = ball.speed * cos(degreesToRadians(angle));
     ball.dy = ball.speed * sin(degreesToRadians(angle));
 }
@@ -233,6 +232,20 @@ void Game::moveBall(Ball& ball, float deltaTime) {
     ball.collider.y = static_cast<int>(ceil(ball.y));
 }
 
+void Game::runAI(Ball& ball, Paddle& paddle, float deltaTime) {
+    //To make this "smarter" we could introduce some variance between the "target Y" that the paddle chooses
+    //Every some number of frames it could pick a different position nearby to the ball to move towards
+    //But the original Pong did it this way and it works well enough
+    //Make the paddle try to match its center with the ball but cap its movement at the maximum speed
+    if (ball.collider.y+ball.collider.h/2 < paddle.collider.y+paddle.collider.h/2 && paddle.y > 0) {
+        paddle.y -= (deltaTime * Globals::PADDLE_SPEED);
+    }
+    else if (ball.collider.y+ball.collider.h/2 > paddle.collider.y+paddle.collider.h/2 && paddle.y < Globals::SCREEN_HEIGHT - Globals::PADDLE_HEIGHT ) {
+        paddle.y += (deltaTime * Globals::PADDLE_SPEED);
+    }
+    paddle.collider.y = static_cast<int>(ceil(paddle.y));
+}
+
 void Game::detectPaddleCollision(Ball& ball, Paddle& paddle) {
     int ballLeft = ball.collider.x;
     int ballRight = ball.collider.x+ball.collider.w;
@@ -244,14 +257,10 @@ void Game::detectPaddleCollision(Ball& ball, Paddle& paddle) {
     int paddleTop = paddle.collider.y;
     int paddleBottom = paddle.collider.y + paddle.collider.h;
 
-    bool validCollision =
-        (ball.collider.x + ball.collider.w/2 > paddle.collider.x && ball.dx < 0)
-        || (ball.collider.x + ball.collider.w/2 < paddle.collider.x + Globals::PADDLE_WIDTH && ball.dx > 0);
-    if (ballRight >= paddleLeft && ballLeft <= paddleRight && ballBottom >= paddleTop && ballTop <= paddleBottom  && validCollision) {
-        //Need to detect where on the paddle the collision is, center, top or bottom
+    if (ballRight >= paddleLeft && ballLeft <= paddleRight && ballBottom >= paddleTop && ballTop <= paddleBottom) {
 
         if (ball.speed < ball.maxSpeed) {
-            ball.speed += 40;
+            ball.speed += 80;
         }
 
         int paddleCenter = paddleTop + Globals::PADDLE_HEIGHT/2;

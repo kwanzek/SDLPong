@@ -41,6 +41,7 @@ struct Game {
     void startRound(Paddle& player1, Paddle& player2, Ball& ball);
     void detectPaddleCollision(Ball& ball, Paddle& paddle);
     void moveBall(Ball& ball, float deltaTime);
+    void runAI(Ball& ball, Paddle& paddle, float deltaTime);
     void detectWallCollision(Ball& ball, float deltaTime);
     void scorePoint(int& playerScore);
     void resetRound();
